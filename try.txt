@@ -1,0 +1,38 @@
+def readInImagesFromDir(dirName, img_rows, img_cols, displayWindows=False):
+	path = Path( dirName )
+	
+	if not path.is_dir( ):
+		print( "Error:", dirName, "is not a directory" )
+		exit( )
+	
+	imgPaths = list( path.glob( '**/*.jpg' ) )
+	imgPaths.extend( path.glob( '**/*.png' ) )
+	imgPathStrs = [ ]
+	imgNames = []
+	for p in imgPaths:
+		pathStr = str(p)
+		imgPathStrs.append( pathStr )
+		
+		imgNames.append( pathStr.split('/')[-1] )
+	imgPathStrs.sort()
+	imgNames.sort()
+	
+	images = [ ]
+	i = 0
+	for n in imgPathStrs:
+		img = cv2.imread( n, cv2.IMREAD_COLOR )
+		img = cv2.cvtColor( img, cv2.COLOR_RGB2GRAY )
+		
+		if displayWindows:
+			cv2.imshow( "image {:d}".format( i ), img )
+		
+		img = cv2.resize( img, (img_rows, img_cols) )
+		img = img[ :, :, numpy.newaxis ]
+		images.append( img )
+		i += 1
+	
+	if displayWindows:
+		cv2.waitKey( 0 )
+		cv2.destroyAllWindows( )
+	
+	return numpy.asarray( images ), imgNames
