@@ -1,11 +1,7 @@
 """
-Kishore Reddy and Akhil Ajikumar
+Aparna Krishnan and Suparna Srinivasan
 CS 5330 Computer Vision
-Spring 2022
-
-This Python file includes
-
-- Task 1 : Build model to recognize mnist and handwritten
+Task 1 - Testing
 
 """
 import torch
@@ -40,16 +36,15 @@ class Net(nn.Module):
         x = self.fc2(x)
         return F.log_softmax(x)
 
-# Sub Network class
+
 class Submodel(Net):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    # override the forward method
     def forward( self, x ):
-        x = F.relu( F.max_pool2d( self.conv1(x), 2 ) ) # relu on max pooled results of conv1
-        x = F.relu( F.max_pool2d( self.conv2_drop( self.conv2(x)), 2 ) ) # relu on max pooled results of dropout of conv2
+        x = F.relu( F.max_pool2d( self.conv1(x), 2 ) )
+        x = F.relu( F.max_pool2d( self.conv2_drop( self.conv2(x)), 2 ) )
         return x
 
 # Test 
@@ -134,6 +129,7 @@ def main(argv):
       plt.title("Ground Truth: {}".format(example_targets[i]))
       plt.xticks([])
       plt.yticks([])
+    plt.show()
     fig
     network = Net()
     optimizer = optim.SGD(network.parameters(), lr=learning_rate,
@@ -170,12 +166,7 @@ def main(argv):
 
 
     kernels = kernels - kernels.min()
-    # print(kernels)
     kernels = kernels / kernels.max()
-    
-    # custom_viz(kernels, 'conv1_weights.png', 4)
-
-
     sub_network = Net()
     sub_optimizer = optim.SGD(sub_network.parameters(), lr=learning_rate,
                                     momentum=momentum)

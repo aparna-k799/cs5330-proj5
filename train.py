@@ -143,6 +143,7 @@ def main(argv):
     plt.legend(['Train Loss', 'Test Loss'], loc='upper right')
     plt.xlabel('number of training examples seen')
     plt.ylabel('negative log likelihood loss')
+    plt.show()
     fig
 
     fig = plt.figure()
