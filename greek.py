@@ -1,12 +1,8 @@
 """
-
-Kishore Reddy and Akhil Ajikumar
+Aparna Krishnan and Suparna Srinivasan
 CS 5330 Computer Vision
-Spring 2021
+Task 3 - Greek digit embedding
 
-This Python file includes
-
-- Task 3 and Extension - Greek letters and KNN
 """
 
 from torchvision.transforms.transforms import Grayscale

@@ -1,12 +1,7 @@
 """
-
-Kishore Reddy and Akhil Ajikumar
+Aparna Krishnan and Suparna Srinivasan
 CS 5330 Computer Vision
-Spring 2021
-
-This Python file includes
-
-- Task 2 - Show effects of filters and truncated model
+Task 2 - Analysis and truncated model
 
 """
 
