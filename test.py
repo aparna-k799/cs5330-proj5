@@ -1,7 +1,11 @@
 """
-Aparna Krishnan and Suparna Srinivasan
+Kishore Reddy and Akhil Ajikumar
 CS 5330 Computer Vision
-Task 1 - Testing
+Spring 2022
+
+This Python file includes
+
+- Task 1 : Build model to recognize mnist and handwritten
 
 """
 import torch
@@ -80,7 +84,7 @@ def main(argv):
     torch.manual_seed(random_seed)
 
     train_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST('/home/kishore/Documents/mnist', train=True, download=True,
+    torchvision.datasets.MNIST('/files', train=True, download=True,
                               transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(
@@ -89,7 +93,7 @@ def main(argv):
     batch_size=batch_size_train, shuffle=True)
     
     test_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST('/home/kishore/Documents/mnist', train=False, download=True,
+    torchvision.datasets.MNIST('/files', train=False, download=True,
                               transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(
@@ -98,26 +102,26 @@ def main(argv):
     batch_size=batch_size_test, shuffle=True)
 
 
-  #  data = torchvision.datasets.ImageFolder('/home/kishore/PRCV/Project_5/data', 
-   #                           transform=torchvision.transforms.Compose([
-   #                             torchvision.transforms.Resize([28,28]),
-   #                             torchvision.transforms.RandomInvert(p=1),
-   #                             torchvision.transforms.Grayscale(num_output_channels=1),
-   #                             torchvision.transforms.ToTensor(),
-   #                             torchvision.transforms.Normalize(
-   #                               (0.1307,), (0.3081,))
-   #                             ]))
+    data = torchvision.datasets.ImageFolder('C:/Users/aparn/OneDrive/Desktop/prcv/cs5330-proj5/data', 
+                              transform=torchvision.transforms.Compose([
+                                torchvision.transforms.Resize([28,28]),
+                                torchvision.transforms.RandomInvert(p=1),
+                                torchvision.transforms.Grayscale(num_output_channels=1),
+                                torchvision.transforms.ToTensor(),
+                                torchvision.transforms.Normalize(
+                                  (0.1307,), (0.3081,))
+                                ]))
 
-   # train_loader2 = torch.utils.data.DataLoader(data,
-   # batch_size=batch_size_train, shuffle=True)
+    train_loader2 = torch.utils.data.DataLoader(data,
+    batch_size=batch_size_train, shuffle=True)
    
     examples = enumerate(train_loader)
     batch_idx,(example_data,example_targets) = next(examples)
 
 
-    #examples2 = enumerate(train_loader2)
-    #batch_idx,(example_data2,example_targets2) = next(examples2)
-    #example_targets2 = np.reshape(example_targets , (64,1))
+    examples2 = enumerate(train_loader2)
+    batch_idx,(example_data2,example_targets2) = next(examples2)
+    example_targets2 = np.reshape(example_targets , (64,1))
     
     example_data[0][0].shape
 
@@ -145,7 +149,7 @@ def main(argv):
     test_losses = []
     test_counter = [i*len(train_loader.dataset) for i in range(n_epochs + 1)]
 
-    test(network, test_loader, test_losses)
+    # test(network, test_loader, test_losses)
     for epoch in range(1, n_epochs + 1):
 
       test(network, test_loader, test_losses)
@@ -175,29 +179,27 @@ def main(argv):
     sub_network = Net()
     sub_optimizer = optim.SGD(sub_network.parameters(), lr=learning_rate,
                                     momentum=momentum)
-    sub_network_state_dict = torch.load('C:/Users/aparn/OneDrive/Desktop/prcv/model.pth')
+    sub_network_state_dict = torch.load('model.pth')
     sub_network.load_state_dict(sub_network_state_dict)
 
-    sub_optimizer_state_dict = torch.load('C:/Users/aparn/OneDrive/Desktop/prcv/optimizer.pth')
+    sub_optimizer_state_dict = torch.load('optimizer.pth')
     sub_optimizer.load_state_dict(sub_optimizer_state_dict)
     sub_network.eval()
 
-   # with torch.no_grad():
-    #  sub_output = sub_network(example_data2)
+    with torch.no_grad():
+      sub_output = sub_network(example_data2)
 
-   # fig = plt.figure()
-   # for i in range(6):
-   #   plt.subplot(2,3,i+1)
-   #   plt.tight_layout()
-   #   plt.imshow(example_data2[i][0], cmap='gray', interpolation='none')
-   #   plt.title("Prediction: {}".format(
-   #     sub_output.data.max(1, keepdim=True)[1][i].item()))
-   #   plt.xticks([])
-   #   plt.yticks([])
-   # fig
-
-
-
+    fig = plt.figure()
+    for i in range(6):
+      plt.subplot(2,3,i+1)
+      plt.tight_layout()
+      plt.imshow(example_data2[i][0], cmap='gray', interpolation='none')
+      plt.title("Prediction: {}".format(
+        sub_output.data.max(1, keepdim=True)[1][i].item()))
+      plt.xticks([])
+      plt.yticks([])
+    plt.show()
+    fig
 
 
     
