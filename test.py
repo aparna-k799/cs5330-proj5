@@ -37,15 +37,15 @@ class Net(nn.Module):
         return F.log_softmax(x)
 
 
-class Submodel(Net):
+# class Submodel(Net):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
 
-    def forward( self, x ):
-        x = F.relu( F.max_pool2d( self.conv1(x), 2 ) )
-        x = F.relu( F.max_pool2d( self.conv2_drop( self.conv2(x)), 2 ) )
-        return x
+#     def forward( self, x ):
+#         x = F.relu( F.max_pool2d( self.conv1(x), 2 ) )
+#         x = F.relu( F.max_pool2d( self.conv2_drop( self.conv2(x)), 2 ) )
+#         return x
 
 # Test 
 def test(network, test_loader, test_losses):
@@ -79,7 +79,7 @@ def main(argv):
     torch.manual_seed(random_seed)
 
     train_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST('/files', train=True, download=True,
+    torchvision.datasets.MNIST('./files', train=True, download=True,
                               transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(
@@ -88,7 +88,7 @@ def main(argv):
     batch_size=batch_size_train, shuffle=True)
     
     test_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST('/files', train=False, download=True,
+    torchvision.datasets.MNIST('./files', train=False, download=True,
                               transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(
@@ -97,7 +97,7 @@ def main(argv):
     batch_size=batch_size_test, shuffle=True)
 
 
-    data = torchvision.datasets.ImageFolder('C:/Users/aparn/OneDrive/Desktop/prcv/cs5330-proj5/data', 
+    data = torchvision.datasets.ImageFolder('./data', 
                               transform=torchvision.transforms.Compose([
                                 torchvision.transforms.Resize([28,28]),
                                 torchvision.transforms.RandomInvert(p=1),
@@ -136,9 +136,9 @@ def main(argv):
                           momentum=momentum)
 
 
-    sub_network = Submodel()
-    sub_optimizer = optim.SGD(sub_network.parameters(), lr=learning_rate,
-                          momentum=momentum)
+    # sub_network = Submodel()
+    # sub_optimizer = optim.SGD(sub_network.parameters(), lr=learning_rate,
+    #                       momentum=momentum)
 
     train_losses = []
     train_counter = []
@@ -162,35 +162,44 @@ def main(argv):
 
     kernels = network.conv2.weight.cpu().detach().clone()
     kernels_1 = network.conv1.weight.cpu().detach().numpy()
-  
 
 
     kernels = kernels - kernels.min()
     kernels = kernels / kernels.max()
-    sub_network = Net()
-    sub_optimizer = optim.SGD(sub_network.parameters(), lr=learning_rate,
-                                    momentum=momentum)
-    sub_network_state_dict = torch.load('model.pth')
-    sub_network.load_state_dict(sub_network_state_dict)
+    plt.figure(figsize=(5,6))
+    for i, filter in enumerate(network.conv1.weight):
+        plt.subplot(5, 5, i+1) 
+        plt.imshow(filter[0, :, :].detach(), cmap='viridis')
+        plt.axis('off')
+        plt.savefig('filter.png')
+        plt.xticks=[]
+        plt.yticks=[]
+        
+    plt.show()
+    # sub_network = Net()
+    # sub_optimizer = optim.SGD(sub_network.parameters(), lr=learning_rate,
+    #                                 momentum=momentum)
+    # sub_network_state_dict = torch.load('model.pth')
+    # sub_network.load_state_dict(sub_network_state_dict)
 
-    sub_optimizer_state_dict = torch.load('optimizer.pth')
-    sub_optimizer.load_state_dict(sub_optimizer_state_dict)
-    sub_network.eval()
+    # sub_optimizer_state_dict = torch.load('optimizer.pth')
+    # sub_optimizer.load_state_dict(sub_optimizer_state_dict)
+    # sub_network.eval()
 
-    with torch.no_grad():
-      sub_output = sub_network(example_data2)
+    # with torch.no_grad():
+    #   sub_output = sub_network(example_data2)
 
     fig = plt.figure()
-    for i in range(6):
-      plt.subplot(2,3,i+1)
-      plt.tight_layout()
-      plt.imshow(example_data2[i][0], cmap='gray', interpolation='none')
-      plt.title("Prediction: {}".format(
-        sub_output.data.max(1, keepdim=True)[1][i].item()))
-      plt.xticks([])
-      plt.yticks([])
-    plt.show()
-    fig
+    # for i in range(6):
+    #   plt.subplot(2,3,i+1)
+    #   plt.tight_layout()
+    #   plt.imshow(example_data2[i][0], cmap='gray', interpolation='none')
+    #   plt.title("Prediction: {}".format(
+    #     sub_output.data.max(1, keepdim=True)[1][i].item()))
+    #   plt.xticks([])
+    #   plt.yticks([])
+    # plt.show()
+    # fig
 
 
     
