@@ -1,4 +1,9 @@
+"""
+Aparna Krishnan and Suparna Srinivasan
+CS 5330 Computer Vision
+Task 2 - Truncated network
 
+"""
 
 from torchvision.transforms.transforms import Grayscale
 import PIL.ImageOps
@@ -149,7 +154,7 @@ def main(argv):
       fig = plt.figure()
       for i in range(10):
         resulting_image = cv2.filter2D(src_image[0], -1, kernels_2[i][0])
-        f, axarr = plt.subplots(1,2)
+        f, axarr = plt.subplots(1, 2)
         axarr[0].imshow(kernels_2[i][0], cmap='gray', interpolation='none')
         axarr[1].imshow(resulting_image, cmap='gray', interpolation='none')
         plt.title("Kernel: {}".format(i))

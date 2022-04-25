@@ -1,7 +1,7 @@
 """
 Aparna Krishnan and Suparna Srinivasan
 CS 5330 Computer Vision
-Task 1 - Training
+Task 3 - Greek letter and Embedding
 
 """
 
@@ -18,9 +18,11 @@ from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from sklearn.neighbors import KNeighborsClassifier
 from pathlib import Path
 import cv2
 
+#network
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -56,8 +58,8 @@ def train(epoch, network, train_loader, optimizer, train_losses, train_counter, 
       train_losses.append(loss.item())
       train_counter.append(
         (batch_idx*64) + ((epoch-1)*len(train_loader.dataset)))
-      torch.save(network.state_dict(), './greek_model.pth')
-      torch.save(optimizer.state_dict(), './greek_optimizer.pth')
+      torch.save(network.state_dict(), 'C:/Users/aparn/OneDrive/Desktop/prcv/greek_model.pth')
+      torch.save(optimizer.state_dict(), 'C:/Users/aparn/OneDrive/Desktop/prcv/greek_optimizer.pth')
 
 def test(network, test_loader, test_losses):
   network.eval()
@@ -65,17 +67,15 @@ def test(network, test_loader, test_losses):
   correct = 0
   with torch.no_grad():
     for data, target in test_loader:
-      output = network(data)
-      test_loss += F.nll_loss(output, target, size_average=False).item()
-      pred = output.data.max(1, keepdim=True)[1]
+      greek_output = network(data)
+      test_loss += F.nll_loss(greek_output, target, size_average=False).item()
+      pred = greek_output.data.max(1, keepdim=True)[1]
       correct += pred.eq(target.data.view_as(pred)).sum()
   test_loss /= len(test_loader.dataset)
   test_losses.append(test_loss)
   print('\nTest set: Avg. loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     test_loss, correct, len(test_loader.dataset),
     100. * correct / len(test_loader.dataset)))
-  
-# Train MNIST Data
 def main(argv):
     if(len(argv)<2):
           print("Usage: python greek.py <directory_name>")
@@ -110,7 +110,7 @@ def main(argv):
     np.savetxt("letterData.csv", d, delimiter=",", header="image data")
     np.savetxt( "letterCats.csv", mapping, delimiter=",", header="ground truth cat" )
 
-    n_epochs = 200
+    n_epochs = 150
     batch_size_train = 64
     batch_size_test = 1000
     learning_rate = 0.01
@@ -152,22 +152,21 @@ def main(argv):
     plt.show()
     fig
 
-    network = Net()
-    optimizer = optim.SGD(network.parameters(), lr=learning_rate,
+    greek_network = Net()
+    optimizer = optim.SGD(greek_network.parameters(), lr=learning_rate,
                           momentum=momentum)
-
     train_losses = []
     train_counter = []
     test_losses = []
     test_counter = [i*len(train_loader.dataset) for i in range(n_epochs + 1)]
 
-    test(network, test_loader, test_losses)
+    test(greek_network, test_loader, test_losses)
     for epoch in range(1, n_epochs + 1):
-      train(epoch, network, train_loader, optimizer, train_losses, train_counter, log_interval)
-      test(network, test_loader, test_losses)
+      train(epoch, greek_network, train_loader, optimizer, train_losses, train_counter, log_interval)
+      test(greek_network, test_loader, test_losses)
 
     with torch.no_grad():
-      output = network(example_data)
+      greek_output = greek_network(example_data)
     
 
     fig = plt.figure()
@@ -176,14 +175,25 @@ def main(argv):
       plt.tight_layout()
       plt.imshow(example_data[i][0], cmap='gray', interpolation='none')
       plt.title("Prediction: {}".format(
-        output.data.max(1, keepdim=True)[1][i].item()))
+        greek_output.data.max(1, keepdim=True)[1][i].item()))
       plt.xticks([])
       plt.yticks([])
     plt.show()
     fig
+    
+    #The following SSD code does not run, so commenting out.
 
- 
+    ''' ssd = 0
 
+    ssd = torch.cat((np.square(greek_output[:,None] - greek_output[3]).sum(axis=2), example_targets) , 1)
+
+    print(ssd[ssd[:, 0].sort()[1]])
+
+    neigh = KNeighborsClassifier(n_neighbors=1)
+    neigh.fit(greek_output, example_targets)
+    
+    print("score = ",neigh.score(greek_output, example_targets))
+ '''
     return
 
 if __name__ == "__main__":

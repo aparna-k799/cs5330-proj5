@@ -1,7 +1,7 @@
 """
 Aparna Krishnan and Suparna Srinivasan
 CS 5330 Computer Vision
-Task 1 - Training
+Task 4 - Design your own network
 
 """
 
