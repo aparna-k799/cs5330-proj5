@@ -1,12 +1,7 @@
 """
-
-Kishore Reddy and Akhil Ajikumar
+Aparna Krishnan and Suparna Srinivasan
 CS 5330 Computer Vision
-Spring 2021
-
-This Python file includes
-
-- Task 2 - Show effects of filters and truncated model
+Task 2 - Truncated network
 
 """
 
@@ -88,14 +83,14 @@ def main(argv):
     torch.backends.cudnn.enabled = False
     torch.manual_seed(random_seed)
     train_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST('/files', train=True, download=True,
+    torchvision.datasets.MNIST('./mnist', train=True, download=True,
                               transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor()
                               ])),
     batch_size=batch_size_train, shuffle=True)
     
     test_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST('/files', train=False, download=True,
+    torchvision.datasets.MNIST('./mnist', train=False, download=True,
                               transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(
@@ -126,19 +121,19 @@ def main(argv):
     m = nn.Dropout(p=0.2)
     input = torch.randn(20,16)
     output = m(input)
-    # print(output)
+    print(output)
   
 
     kernels = sub_network.conv2.weight.cpu().detach().clone()
     kernels_2 = sub_network.conv2.weight.cpu().detach().numpy()
-    # print(kernels_2.shape)
+    print(kernels_2.shape)
 
 
     kernels = kernels - kernels.min()
-    # print(kernels)
+    print(kernels)
     kernels = kernels / kernels.max()
-    # print(kernels[9])
-    # custom_viz(kernels, 'conv1_weights.png', 4)
+    print(kernels[9])
+    custom_viz(kernels, 'conv1_weights.png', 4)
 
     import cv2
     import torchvision.transforms as T
@@ -153,6 +148,7 @@ def main(argv):
       src_image = value[0][0].cpu().detach().numpy()
       imgplot = plt.imshow(src_image[0])
       plt.show()
+      plt.show()
       # print(type(src_image[0]))
       
       fig = plt.figure()
@@ -164,7 +160,9 @@ def main(argv):
         plt.title("Kernel: {}".format(i))
         plt.xticks([])
         plt.yticks([])
-      fig
+        # plt.plot()
+      plt.show()
+      # fig
     
     return
 if __name__ == "__main__":

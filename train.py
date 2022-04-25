@@ -54,8 +54,8 @@ def train(epoch, network, train_loader, optimizer, train_losses, train_counter, 
       train_losses.append(loss.item())
       train_counter.append(
         (batch_idx*64) + ((epoch-1)*len(train_loader.dataset)))
-      torch.save(network.state_dict(), 'C:/Users/aparn/OneDrive/Desktop/prcv/model.pth')
-      torch.save(optimizer.state_dict(), 'C:/Users/aparn/OneDrive/Desktop/prcv/optimizer.pth')
+      torch.save(network.state_dict(), 'model.pth')
+      torch.save(optimizer.state_dict(), 'optimizer.pth')
 
 def test(network, test_loader, test_losses):
   network.eval()
@@ -86,7 +86,7 @@ def main(argv):
     torch.backends.cudnn.enabled = False
     torch.manual_seed(random_seed)
     train_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST('/files', train=True, download=True,
+    torchvision.datasets.MNIST('./files', train=True, download=True,
                               transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(
@@ -95,7 +95,7 @@ def main(argv):
     batch_size=batch_size_train, shuffle=True)
     
     test_loader = torch.utils.data.DataLoader(
-    torchvision.datasets.MNIST('/files', train=False, download=True,
+    torchvision.datasets.MNIST('./files', train=False, download=True,
                               transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(
@@ -137,6 +137,8 @@ def main(argv):
     with torch.no_grad():
       output = network(example_data)
     
+    torch.save(network.state_dict(),"./mnistModel.h5")
+
     fig = plt.figure()
     plt.plot(train_counter, train_losses, color='blue')
     plt.scatter(test_counter, test_losses, color='red')
